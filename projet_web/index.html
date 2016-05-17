@@ -8,17 +8,17 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Maison du code: Apprennez a developper le future</title>
+    <title>Carousel Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="static/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="static/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="static/assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="assets/js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    <link href="static/css/carousel.css" rel="stylesheet">
+    <link href="carousel.css" rel="stylesheet">
   </head>
 <!-- NAVBAR
 ================================================== -->
@@ -48,7 +48,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Principal</a></li>
+                <li class="active"><a href="#">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li class="dropdown">
@@ -64,47 +64,15 @@
                   </ul>
                 </li>
               </ul>
-
-            <!--  <form class="navbar-form navbar-right" action="/login" method="POST">
-                {% if logged %}
-                <p>
-                  Salut!
-               </p>
-               {% else %}
+              <form class="navbar-form navbar-right">
                 <div class="form-group">
-                  <input type="text" placeholder="Email" class="form-control" name="Email">
+                  <input type="text" placeholder="Email" class="form-control">
                 </div>
                 <div class="form-group">
                   <input type="password" placeholder="Password" class="form-control">
                 </div>
                 <button type="submit" class="btn btn-success">Entré</button>
-              {% endif %}
               </form>
-            -->
-            {% if logged %}
-          <form class="navbar-form navbar-right" action="/logout">
-              Salut! {{ message }}
-           <button type="submit" class="btn btn-danger">Sortir</button>
-         </form>
-           {% else %}
-            <form class="navbar-form navbar-right" action="/login" method="POST">
-            <!--  <div class="form-group">
-                <input type="text" placeholder="Email" class="form-control">
-              </div>
-              <div class="form-group">
-                <input type="password" placeholder="Password" class="form-control">
-              </div>
-              <button type="submit" class="btn btn-success">Entré</button>
-            -->
-            <div class="form-group">
-              <input type="text" placeholder="Email" class="form-control" name="Email">
-            </div>
-            <div class="form-group">
-              <input type="password" placeholder="Password" class="form-control" name="Password">
-            </div>
-            <button type="submit" class="btn btn-success">Entré</button>
-            </form>
-            {% endif %}
             </div>
           </div>
         </nav>
@@ -124,17 +92,17 @@
       </ol>
       <div class="carousel-inner" role="listbox">
         <div class="item active">
-          <img class="first-slide" src="static/images/U3W2SHOLWQ.jpg" alt="First slide">
+          <img class="first-slide" src="images/U3W2SHOLWQ.jpg" alt="First slide">
           <div class="container">
             <div class="carousel-caption">
               <h1>Entrez dans la communité des developpeurs</h1>
               <p>Signez pour entrer et partager l'information que vous voulez.</p>
-              <p><a class="btn btn-lg btn-primary" href="#" role="button" >Sign up today</a></p>
+              <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
             </div>
           </div>
         </div>
         <div class="item">
-          <img class="second-slide" src="static/images/825303XHAE.jpg" alt="Second slide">
+          <img class="second-slide" src="images/825303XHAE.jpg" alt="Second slide">
           <div class="container">
             <div class="carousel-caption">
               <h1>Another example headline.</h1>
@@ -145,11 +113,11 @@
         </div>
       </div>
       <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-        <!--<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>-->
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
       </a>
       <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-        <!--<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>-->
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
       </a>
     </div><!-- /.carousel -->
@@ -240,11 +208,11 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="static/dist/js/bootstrap.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="dist/js/bootstrap.min.js"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="static/assets/js/vendor/holder.min.js"></script>
+    <script src="assets/js/vendor/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="static/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>
