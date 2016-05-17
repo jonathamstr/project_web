@@ -2,7 +2,7 @@ from flask import *
 from sqlalchemy import *
 from sqlalchemy.sql import *
 from sqlalchemy.orm import sessionmaker
-from sql_alchemydeclarative import  Base, User
+from sql_alchemydeclarative import  Base, User ,Publication
 
 app = Flask(__name__)
 app.secret_key = 'iswuygdedgv{&75619892__01;;>..zzqwQIHQIWS'
@@ -12,6 +12,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 DBSession.bind = engine
 sessiondb = DBSession()
+metadata.create_all(engine)
+connection = engine.connect()
 Error = ''
 cree = False
 
@@ -28,28 +30,36 @@ def index():
     message = ""
     if logged:
         message = session['Email']
+        #query = users.select().order_by(users.c.id.desc()).limit(5)
+        pubs = sessiondb.query(Publication).order_by(Publication.date.desc()).limit(10)
+        for i in pubs:
+            print(i.titre)
+        return render_template('html/publication.html',message=message, logged=logged,pubs=pubs)
     else:
         message = 'User ne pas trouve'
         print(message)
+        return render_template('html/index.html',message=message, logged=logged)
     #return redirect(url_for('static', filename='html/index.html'))
-    return render_template('html/index.html',message=message, logged=logged)
+
 
 @app.route('/login',methods=['POST'])
 def login():
     session['Email'] = escape(request.form['Email'])
     session['Password'] = escape(request.form['Password'])
     session['logged'] = False
-    metadata.create_all(engine)
-    connection = engine.connect()
-    s = select([users.c.nom_util]).where(and_(or_(users.c.nom_util.like(session['Email']),users.c.email_util.like(session['Email'])),users.c.motpass.like(session['Password'])))
-    for row in connection.execute(s):
+    person = sessiondb.query(User).filter(or_(User.nom_util == session['Email'],User.email_util == session['Email'])).all()
+    #metadata.create_all(engine)
+    #connection = engine.connect()
+    #s = select([users.c.nom_util]).where(and_(or_(users.c.nom_util.like(session['Email']),users.c.email_util.like(session['Email'])),users.c.motpass.like(session['Password'])))
+    #for row in connection.execute(s):
+    for row in person:
         print(row)
         session['logged'] = True
         print("User found")
     print('\n')
 
     #result = connection.execute(s)
-    connection.close()
+    #connection.close()
     if session['logged']:
         return redirect('/')
     else:
@@ -75,8 +85,7 @@ def register():
     Name = escape(request.form['Name'])
     #session['Email'] = escape(request.form['Email'])
     #session['Password'] = escape(request.form['Password'])
-    metadata.create_all(engine)
-    connection = engine.connect()
+
     person = sessiondb.query(User).filter(or_(User.nom_util == Name,User.email_util == Email)).all()
     for i in person:
         if(i.nom_util == Name):
@@ -93,6 +102,23 @@ def register():
         sessiondb.commit()
         session['Email'] = Email
         session['logged'] = True
+    return redirect('/')
+
+
+@app.route('/pub',methods=['POST'])
+def pub():
+    Email = session['Email']
+    Name = session['Email']
+    print(Email)
+    person = sessiondb.query(User).filter(or_(User.nom_util == Name,User.email_util == Email)).one()
+    #person = sessiondb.query(User).filter(or_(User.email_util == Email, User.nom_util == Email)).all()
+    if person:
+        print(person.cle_util)
+        print('Person found')
+    print(request.form['Titre'] + '\n' + request.form['Corps'])
+    pub = Publication(cle_util = person.cle_util, auteur = person, titre  = request.form['Titre'], corps = request.form['Corps'] )
+    sessiondb.add(pub)
+    sessiondb.commit()
     return redirect('/')
 
 if __name__ == '__main__':

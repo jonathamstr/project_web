@@ -15,6 +15,15 @@ class User(Base):
     motpass = Column(String)
     info_uti = Column(String)
 
+class Publication(Base):
+    __tablename__='publication'
+    cle_pub = Column(Integer,autoincrement=True,primary_key=True)
+    cle_util = Column(Integer,ForeignKey('user.cle_util'))
+    auteur = relationship(User)
+    titre = Column(String)
+    corps = Column(String)
+    date = Column(DateTime,default=func.now())
+
 engine = create_engine('sqlite:///mabase.db', echo=True)
 
 Base.metadata.create_all(engine)
