@@ -24,6 +24,15 @@ class Publication(Base):
     corps = Column(String)
     date = Column(DateTime,default=func.now())
 
+class Commentaire(Base):
+    __tablename__='commentaire'
+    cle_comm = Column(Integer,autoincrement=True,primary_key=True)
+    cle_pub = Column(Integer,ForeignKey('publication.cle_pub'))
+    publication = relationship(Publication)
+    cle_util = Column(Integer,ForeignKey('user.cle_util'))
+    auteur = relationship(User)
+    corps = Column(String)
+
 engine = create_engine('sqlite:///mabase.db', echo=True)
 
 Base.metadata.create_all(engine)

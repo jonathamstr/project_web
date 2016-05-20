@@ -11,14 +11,14 @@
     <title>Maison du code: Apprennez a developper le future</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="static/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <!--<link href="static/dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <link href="{{ url_for('static', filename='dist/css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="static/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="/static/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="static/assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="/static/assets/js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -27,16 +27,17 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    <link href="static/css/carousel.css" rel="stylesheet">
-    <link href="static/css/theme.css" rel="stylesheet">
+    <link href="/static/css/carousel.css" rel="stylesheet">
+    <link href="/static/css/theme.css" rel="stylesheet">
+    <link href="/static/css/publication.css" rel="stylesheet">
   </head>
 <!-- NAVBAR
 ================================================== -->
   <body>
-    <div class="navbar-wrapper">
-      <div class="container">
+<!--    <div class="navbar-wrapper"> -->
+<!--      <div class="container"> -->
 
-        <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="navbar navbar-inverse navbar-fixed-top">
           <div class="container">
             <div class="navbar-header">
               <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -45,7 +46,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">Maison du code</a>
+              <a class="navbar-brand" href="/">Maison du code</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
@@ -84,7 +85,7 @@
             -->
             {% if logged %}
           <form class="navbar-form navbar-right" action="/logout">
-              Salut! {{ message }}
+          <a href="#"> {{ message }} </a>
            <button type="submit" class="btn btn-danger">Sortir</button>
          </form>
            {% else %}
@@ -112,52 +113,44 @@
             {% endif %}
             </div>
           </div>
-        </nav>
+        </div>
 
-      </div>
+  <!--    </div> -->
+  <!--  </div> -->
+
+
+	<div class="container main-container">
+    <h1>{{ publ.titre }}</h1>
+    <p>{{ publ.corps }}</p>
+    <p>Par {{publ.auteur.nom_util}} le {{publ.date}}</p>
+    <!--  <div class="form-group">
+        <form action="/pub" method="POST">
+	<h3>Nouvelle Publication</h3>
+  <label for="title">Titre de la publication</label>
+  <input type="text" class="form-control" placeholder="Titre" name="Titre">
+  <label for="Corps">Mettre l'information</label>
+  <textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
+ 	<br>
+     <button class="btn btn-lg btn-primary btn-block" type="submit">Publier</button>
+   </form>
+ </div>-->
+ {% if comments %}
+  <div>
+    {% for comm in comments %}
+      <h4>{{comm.auteur.nom_util}} dis: </h4>
+      <p>{{ comm.corps }}</p>
+      <br>
+    {% endfor %}
+  </div>
+ {% endif %}
+ <div class="form-group">
+   <form class="comment" method='POST' >
+       <label for="Corps">Faire un commentaire</label>
+        <textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Publier</button>
+      </form>
     </div>
 
-
-	<hr>
-	<div class="container">
-	<h2>xbindkeys does not work. Terminated message</h2>
- 	<hr>
-	</div>
-	<br>
-
-	<div class="container">
-	<div class="post-text" itemprop="text">
-
-	<p>I have xbindkeys among the commands to run on session start on my xinitrc.
-	Problem is, lately xbindkeys is not running. </p>
-
-	<p>All other programs on xinitrc run, so its not startx.</p>
-
-	<p>When I try running from console, (even with the -n non demon flag) the program exits immediately with the message <code>Terminated</code></p>
-
-	<p>What could it be? Thanks in advance.</p>
-	    </div>
-
-	</div>
-	<hr>
-
-	<div class="container">
-	<h2>Answer</h2>
-    	<p>You are missing a store. Every grid needs a store. (this.ds is undefined =&gt; ds is probably dataStore)</p>
-
-<p>I don't know what version you are working with. (check that by typing <code>Ext.versions.extjs.version</code> in the console)</p>
- 	<hr>
-
-	</div>
-
-	<div class="container">
-	<h2>Your Answer</h2>
-    <textarea class="form-control" rows="3"></textarea>
- 	<br>
-
-	</div>
-	<hr>
-</div>
 
       <!-- FOOTER -->
       <footer>
@@ -172,11 +165,16 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="static/assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="static/dist/js/bootstrap.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/static/assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="/static/dist/js/bootstrap.min.js"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
-    <script src="static/assets/js/vendor/holder.min.js"></script>
+    <script src="/static/assets/js/vendor/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="static/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/static/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script>
+      $(document).ready(function(){
+        $(".comment").attr('action','/postcomment/'+ {{ publ.cle_pub }});
+        });
+    </script>
   </body>
 </html>

@@ -2,9 +2,10 @@ from flask import *
 from sqlalchemy import *
 from sqlalchemy.sql import *
 from sqlalchemy.orm import sessionmaker
-from sql_alchemydeclarative import  Base, User ,Publication
+from sql_alchemydeclarative import  Base, User ,Publication, Commentaire
 
 app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.secret_key = 'iswuygdedgv{&75619892__01;;>..zzqwQIHQIWS'
 engine = create_engine('sqlite:///mabase.db', echo=True)
 metadata = MetaData()
@@ -16,6 +17,8 @@ metadata.create_all(engine)
 connection = engine.connect()
 Error = ''
 cree = False
+message = ""
+logged = []
 
 users = Table('user', metadata,
     Column('cle_util', Integer, autoincrement=True, primary_key=True),
@@ -27,14 +30,13 @@ users = Table('user', metadata,
 @app.route('/')
 def index():
     logged = 'logged' in session
-    message = ""
     if logged:
         message = session['Email']
         #query = users.select().order_by(users.c.id.desc()).limit(5)
         pubs = sessiondb.query(Publication).order_by(Publication.date.desc()).limit(10)
         for i in pubs:
             print(i.titre)
-        return render_template('html/publication.html',message=message, logged=logged,pubs=pubs)
+        return render_template('html/Random.html',message=message, logged=logged,pubs=pubs)
     else:
         message = 'User ne pas trouve'
         print(message)
@@ -112,14 +114,28 @@ def pub():
     print(Email)
     person = sessiondb.query(User).filter(or_(User.nom_util == Name,User.email_util == Email)).one()
     #person = sessiondb.query(User).filter(or_(User.email_util == Email, User.nom_util == Email)).all()
-    if person:
-        print(person.cle_util)
-        print('Person found')
-    print(request.form['Titre'] + '\n' + request.form['Corps'])
+
     pub = Publication(cle_util = person.cle_util, auteur = person, titre  = request.form['Titre'], corps = request.form['Corps'] )
     sessiondb.add(pub)
     sessiondb.commit()
     return redirect('/')
 
+@app.route('/posting/<Iden>')
+def posting(Iden):
+    publ = sessiondb.query(Publication).filter(Publication.cle_pub == Iden).one()
+    logged = 'logged' in session
+    message = session['Email']
+    comments = sessiondb.query(Commentaire).filter(Commentaire.cle_pub == Iden).all()
+    #return render_template('html/publication.html',message=message, logged=logged)
+    #return app.send_static_file('html/posting.html',message=message, logged=logged,publ = id)
+    return render_template('html/posting.html',message=message, logged=logged,publ = publ,comments = comments )
+
+@app.route('/postcomment/<Iden>',methods=['POST'])
+def postcomment(Iden):
+    person = sessiondb.query(User).filter(or_(User.nom_util == session['Email'],User.email_util == session['Email'])).one()
+    comm  =  Commentaire(cle_pub = Iden, cle_util=person.cle_util, corps = request.form['Corps'] )
+    sessiondb.add(comm)
+    sessiondb.commit()
+    return redirect('/posting/' + Iden)
 if __name__ == '__main__':
   app.run(debug=True)
