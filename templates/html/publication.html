@@ -46,7 +46,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="/">Maison du code</a>
+              <a class="navbar-brand" href="/profile">Maison du code</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
@@ -85,7 +85,7 @@
             -->
             {% if logged %}
           <form class="navbar-form navbar-right" action="/logout">
-          <a href="#"> {{ message }} </a>
+              <a href="/profile" > {{ message }} </a>
            <button type="submit" class="btn btn-danger">Sortir</button>
          </form>
            {% else %}
@@ -172,11 +172,7 @@
         $("tr").click(function(){
           alert('Something')
           var iden = "/posting/"+$(this).attr("id");
-          //window.document.location =iden;
            window.location.href = iden;
-          //window.document.location = "/aaa";
-          //alert(iden);
-          //alert('That worked');
         });
       });
     </script>
