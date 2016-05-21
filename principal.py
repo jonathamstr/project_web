@@ -100,9 +100,7 @@ def register():
 
 @app.route('/pub',methods=['POST'])
 def pub():
-    Email = session['Email']
-    Name = session['Email']
-    person = sessiondb.query(User).filter(or_(User.nom_util == Name,User.email_util == Email)).one()
+    person = sessiondb.query(User).filter(or_(User.nom_util == session['Email'],User.email_util == session['Email'])).one()
     pub = Publication(cle_util = person.cle_util, auteur = person, titre  = request.form['Titre'], corps = request.form['Corps'] )
     sessiondb.add(pub)
     sessiondb.commit()
@@ -111,10 +109,9 @@ def pub():
 @app.route('/posting/<Iden>')
 def posting(Iden):
     publ = sessiondb.query(Publication).filter(Publication.cle_pub == Iden).one()
-    logged = 'logged' in session
-    message = session['Email']
     comments = sessiondb.query(Commentaire).filter(Commentaire.cle_pub == Iden).all()
-    return render_template('html/posting.html',message=message, logged=logged,publ = publ,comments = comments )
+    editable = publ.auteur.email_util == session['Email'] or publ.auteur.nom_util == session['Email']
+    return render_template('html/posting.html',message= session['Email'], logged = session['logged'],publ = publ,comments = comments , editable=editable)
 
 @app.route('/postcomment/<Iden>',methods=['POST'])
 def postcomment(Iden):

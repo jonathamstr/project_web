@@ -120,9 +120,18 @@
 
 
 	<div class="container main-container">
-    <h1>{{ publ.titre }}</h1>
-    <p>{{ publ.corps }}</p>
+<form>
+    <label for="textInput">Titre</label>
+     <input type="text" id="titre" class="form-control" value="{{ publ.titre }}"  {% if not editable %}readonly{% endif %}>
+     <br>
+     <label for="textInput">Corps</label>
+     <textarea class="form-control" rows="3"  {% if not editable %}readonly{% endif %}>{{publ.corps}}</textarea>
     <p>Par {{publ.auteur.nom_util}} le {{publ.date}}</p>
+
+    {% if editable %}
+    <button type="submit" class="btn btn-default">Changer</button>
+    {% endif %}
+  </from>
     <!--  <div class="form-group">
         <form action="/pub" method="POST">
 	<h3>Nouvelle Publication</h3>
@@ -145,7 +154,7 @@
  {% endif %}
  <div class="form-group">
    <form class="comment" method='POST' >
-       <label for="Corps">Faire un commentaire</label>
+       <label for="Corps">Mettre un commentaire</label>
         <textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Publier</button>
       </form>
