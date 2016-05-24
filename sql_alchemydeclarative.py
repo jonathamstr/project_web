@@ -15,6 +15,15 @@ class User(Base):
     motpass = Column(String)
     info_uti = Column(String)
 
+    def serialize(self):
+        return{
+                'cle_util': self.cle_util,
+                'email_util': self.email_util,
+                'nom_util': self.nom_util,
+                'motpass': self.motpass,
+                'info_uti': self.info_uti
+        }
+
 class Publication(Base):
     __tablename__='publication'
     cle_pub = Column(Integer,autoincrement=True,primary_key=True)
@@ -32,6 +41,24 @@ class Commentaire(Base):
     cle_util = Column(Integer,ForeignKey('user.cle_util'))
     auteur = relationship(User)
     corps = Column(String)
+
+class Topic(Base):
+    __tablename__='topic'
+    cle_top = Column(Integer,autoincrement=True,primary_key=True)
+    name_top = Column(String)
+    def serialize(self):
+            return{
+                    'cle_top': self.cle_top,
+                    'name_top': self.name_top
+            }
+
+class Reltop(Base):
+    __tablename__='reltop'
+    cle_reltop = Column(Integer,autoincrement=True,primary_key=True)
+    cle_top = Column(Integer,ForeignKey('topic.cle_top'))
+    topic = relationship(Topic)
+    cle_pub = Column(Integer,ForeignKey('publication.cle_pub'))
+    publication = relationship(Publication)
 
 engine = create_engine('sqlite:///mabase.db', echo=True)
 

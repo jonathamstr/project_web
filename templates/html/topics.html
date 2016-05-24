@@ -12,14 +12,14 @@
     <title>Maison du code: Apprennez a developper le future</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="static/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="static/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="/static/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="static/assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="/static/assets/js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -28,9 +28,9 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    <link href="static/css/carousel.css" rel="stylesheet">
-    <link href="static/css/theme.css" rel="stylesheet">
-    <link href="static/css/publication.css" rel="stylesheet">
+    <link href="/static/css/carousel.css" rel="stylesheet">
+    <link href="/static/css/theme.css" rel="stylesheet">
+    <link href="/static/css/publication.css" rel="stylesheet">
   </head>
 <!-- NAVBAR
 ================================================== -->
@@ -51,9 +51,9 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="/">Principal</a></li>
-                <li><a href="/topics">Topics</a></li>
-                <li><a href="/groups">Groups</a></li>
+                <li><a href="/">Principal</a></li>
+                <li class="active"><a href="/topics">Topics</a></li>
+                <li><a href="/groups">Group</a></li>
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                   <ul class="dropdown-menu">
@@ -121,43 +121,38 @@
 
 
 	<div class="container main-container">
-      <div class="form-group">
+      <!--<div class="form-group">
         <form action="/pub" method="POST">
 	<h3>Nouvelle Publication</h3>
   <label for="title">Titre de la publication</label>
   <input type="text" class="form-control" placeholder="Titre" name="Titre">
   <label for="Corps">Mettre l'information</label>
   <textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
-    <!--<textarea class="form-control" rows="3"></textarea> -->
- 	<br>
+    <textarea class="form-control" rows="3"></textarea> -->
+ <!--	<br>
      <button class="btn btn-lg btn-primary btn-block" type="submit">Publier</button>
    </form>
-   </div>
-   <h3>Selected Topics</h3>
-   <div id="topics">
-
-  </div>
-  <h3>Add Topics</h3>
-  <div id="addTopics">
+ </div>-->
+  <h3>Topics</h3>
+  <div id="searchTopics">
 
   </div>
 <div class="form-group">
-      <h3>Search or Create Topic</h3>
+      <h3>Search</h3>
       <label for="search">Topic</label>
       <input type="text" class="form-control" placeholder="Topic" name="nameTopic" id="nameTopic">
       <button class="btn btn-primary" id="sTopic">Search</button>
-      <button class="btn btn-primary disabled" id="cTopic">Create</button>
 </div>
 
   <div class="container">
     	<div class="divider">
-        <h2>Top Questions</h2>
+        <h2>Search Results</h2>
 
       </div>
       <table class="table table-hover" id="table-publications">
         <tr><th>Titre</th><th>Utilisateur</th><th>Date</th></tr>
         {% for i in pubs %}
-        <tr id={{i.cle_pub}}><td>{{i.titre}}</td><td>{{ i.auteur.nom_util }}</td><td> {{ i.date }}</td></tr>
+        <tr id={{i.cle_pub}}><td>{{i.publication.titre}}</td><td>{{ i.publication.cle_util }}</td><td> {{ i.publication.date }}</td></tr>
         {% endfor %}
       </table>
         <button id="plus" type="submit" class="btn btn-success">Afficher plus</button>
@@ -177,7 +172,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="static/assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script>window.jQuery || document.write('<script src="/static/assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="/static/dist/js/bootstrap.min.js"></script>
     <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
     <script src="/static/assets/js/vendor/holder.min.js"></script>
@@ -186,7 +181,6 @@
     <script type="text/javascript" src="/static/js/useangular.js"></script>
     <script>
       $(document).ready(function(){
-        var selectTopics = [];
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 
         function askServer(root,callFunc){
@@ -212,7 +206,7 @@
         });
       }
       var addTopic = function() {
-        if($(this).parents('div').attr("id") == "addTopics"){
+        if($(this).parents('div').attr("id") == "searchTopics"){
         selectTopics.push($(this).attr("id"));
         $("#topics").append($(this));
         postServer('/upTopics',$(this).attr("id"));
@@ -237,23 +231,22 @@
       };
 
         var changeTopics = function(data){
-            $("#addTopics").empty();
+            $("#searchTopics").empty();
           for(var i of data.ches){
-              if(selectTopics.indexOf(i.name_top) == -1){
-              var topicButton = $("<button></button>").attr({
+              var topicButton = $("<a></a>").attr({
                 "class":"btn btn-default notAdded",
                 "type":"submit",
-                "id": i.name_top
+                "id": i.name_top,
+                href:"/topics/"+i.cle_top
               }).html(i.name_top);
               topicButton.text(i.name_top);
               topicButton.click(addTopic);
-              $("#addTopics").append(topicButton);
-            }
+              $("#searchTopics").append(topicButton);
           }
         };
 
 
-        askServer('/getTopTopics',"",changeTopics);
+        askServer('/searchTopics',"",changeTopics);
         //askServer('/getutil','Hello!!!!!!!!!!!!!!!!!!!!!!!!',priting);
         /*$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
         $.getJSON($SCRIPT_ROOT + '/getutil', {
@@ -269,21 +262,7 @@
         /*Fucntion to search for a topic to add to the Publication*/
         $("#sTopic").click(function(){
           askServer("/searchTopics",$("#nameTopic").val(),function(data){
-        //    $("#addTopics").empty();
             changeTopics(data);
-          /*  for(var i of data.ches){
-              if(selectTopics.indexOf(i.name_top) == -1){
-                var topicButton = $("<button></button>").attr({
-                  "class":"btn btn-default notAdded",
-                  "type":"submit",
-                  "id": i.name_top
-                }).html(i.name_top);
-                topicButton.text(i.name_top);
-                topicButton.click(addTopic);
-                $("#addTopics").append(topicButton);
-              }
-            }*/
-          //  alert($("#nameTopic").val());
             var alreadyCreated = false;
             for(var i of data.ches){
               if(i.name_top == $("#nameTopic").val() ) alreadyCreated = true;
@@ -298,15 +277,6 @@
           });
         });
         /*Function to create a new Topic*/
-        $("#cTopic").click(function(){
-          postServer("/createTopic",$("#nameTopic").val(),function(data){
-          });
-          askServer("/searchTopics",$("#nameTopic").val(),function(data){
-        //    $("#addTopics").empty();
-            changeTopics(data);
-          });
-          $(this).addClass('disabled');
-        });
       /*$("#sTopic").click(askServer("/searchTopics",$("#nameTopic").val(),function(data){
         $("#addTopics").empty();
         for(var i of data.ches){
