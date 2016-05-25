@@ -1,0 +1,216 @@
+{% extends "html/layout.html" %}
+{% block content %}
+	<div class="container main-container">
+      <div class="form-group">
+        <form action="/pub" method="POST">
+	<h3>New Publication</h3>
+  <label for="title">Title of the publication</label>
+  <input type="text" class="form-control" placeholder="Title" name="Titre">
+  <label for="Corps">Fill you the info you want.</label>
+  <textarea type="text" class="form-control" placeholder="Publication" rows="3" name="Corps"></textarea>
+    <!--<textarea class="form-control" rows="3"></textarea> -->
+ 	<br>
+     <button class="btn btn-lg btn-primary btn-block" type="submit">Publier</button>
+   </form>
+   </div>
+   <h3>Selected Topics</h3>
+   <div id="topics">
+
+  </div>
+  <h3>Add Topics</h3>
+  <div id="addTopics">
+
+  </div>
+<div class="form-group">
+      <h3>Search or Create Topic</h3>
+      <label for="search">Topic</label>
+      <input type="text" class="form-control" placeholder="Topic" name="nameTopic" id="nameTopic">
+      <button class="btn btn-primary" id="sTopic">Search</button>
+      <button class="btn btn-primary disabled" id="cTopic">Create</button>
+</div>
+
+  <div class="container">
+    	<div class="divider">
+        <h2>Top Questions</h2>
+
+      </div>
+      <table class="table table-hover" id="table-publications">
+        <tr><th>Titre</th><th>Utilisateur</th><th>Date</th></tr>
+        {% for i in pubs %}
+        <tr id={{i.cle_pub}}><td>{{i.titre}}</td><td>{{ i.auteur.nom_util }}</td><td> {{ i.date }}</td></tr>
+        {% endfor %}
+      </table>
+        <button id="plus" type="submit" class="btn btn-success">Afficher plus</button>
+        {% if pubs %}
+        <button id="moins" type="submit" class="btn btn-danger">Afficher moins</button>
+        {% endif %}
+
+
+    </div><!-- /.container -->
+    {% endblock %}
+
+    {% block script %}
+    <script>
+      $(document).ready(function(){
+        var selectTopics = [];
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+        function askServer(root,callFunc){
+          $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+          $.getJSON($SCRIPT_ROOT + root ,function(data){
+          callFunc(data);
+          });
+        }
+
+        function postServer(root,info){
+          $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+          $.getJSON($SCRIPT_ROOT + root ,{
+              message: info
+          });
+        }
+
+        function askServer(root,info,callFunc){
+          $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+          $.getJSON($SCRIPT_ROOT + root ,{
+            message: info
+          },function(data){
+          callFunc(data);
+        });
+      }
+      var addTopic = function() {
+        if($(this).parents('div').attr("id") == "addTopics"){
+        selectTopics.push($(this).attr("id"));
+        $("#topics").append($(this));
+        postServer('/upTopics',$(this).attr("id"));
+        //alert($(this).parents('div').attr("id"));
+      }
+      else{
+       var pos = selectTopics.indexOf($(this).attr("id"));
+        selectTopics.splice(pos,1);
+       $("#addTopics").append($(this));
+       postServer('/downTopics',$(this).attr("id"));
+      }
+      };
+
+      var removeTopic = function(){
+         var pos = selectTopics.indexOf($(this).attr("id"));
+         selectTopics.splice(pos,1);
+        $("#addTopics").append($(this));
+        postServer('/downTopics',$(this).attr("id"));
+      //  alert(selectTopics);
+      //  alert(selectTopics.indexOf($(this).attr("id")));
+      $(this).click(addTopic);
+      };
+
+        var changeTopics = function(data){
+            $("#addTopics").empty();
+          for(var i of data.ches){
+              if(selectTopics.indexOf(i.name_top) == -1){
+              var topicButton = $("<button></button>").attr({
+                "class":"btn btn-default notAdded",
+                "type":"submit",
+                "id": i.name_top
+              }).html(i.name_top);
+              topicButton.text(i.name_top);
+              topicButton.click(addTopic);
+              $("#addTopics").append(topicButton);
+            }
+          }
+        };
+
+
+        askServer('/getTopTopics',"",changeTopics);
+        //askServer('/getutil','Hello!!!!!!!!!!!!!!!!!!!!!!!!',priting);
+        /*$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        $.getJSON($SCRIPT_ROOT + '/getutil', {
+            message: "{{ message }}"
+        },function(data){
+          alert(data.ches);
+        });
+        */
+      /*  $.getJSON($SCRIPT_ROOT + '/getTopTopics' ,function(data){
+          alert(data.ches[0].name_top);
+        }); */
+
+        /*Fucntion to search for a topic to add to the Publication*/
+        $("#sTopic").click(function(){
+          askServer("/searchTopics",$("#nameTopic").val(),function(data){
+        //    $("#addTopics").empty();
+            changeTopics(data);
+          /*  for(var i of data.ches){
+              if(selectTopics.indexOf(i.name_top) == -1){
+                var topicButton = $("<button></button>").attr({
+                  "class":"btn btn-default notAdded",
+                  "type":"submit",
+                  "id": i.name_top
+                }).html(i.name_top);
+                topicButton.text(i.name_top);
+                topicButton.click(addTopic);
+                $("#addTopics").append(topicButton);
+              }
+            }*/
+          //  alert($("#nameTopic").val());
+            var alreadyCreated = false;
+            for(var i of data.ches){
+              if(i.name_top == $("#nameTopic").val() ) alreadyCreated = true;
+            }
+            //alert(data.ches.indexOf($("#nameTopic").val()));
+            if(!alreadyCreated ){
+              $("#cTopic").removeClass('disabled');
+            }
+            else{
+              $("#cTopic").addClass('disabled');
+            }
+          });
+        });
+        /*Function to create a new Topic*/
+        $("#cTopic").click(function(){
+          postServer("/createTopic",$("#nameTopic").val(),function(data){
+          });
+          askServer("/searchTopics",$("#nameTopic").val(),function(data){
+        //    $("#addTopics").empty();
+            changeTopics(data);
+          });
+          $(this).addClass('disabled');
+        });
+      /*$("#sTopic").click(askServer("/searchTopics",$("#nameTopic").val(),function(data){
+        $("#addTopics").empty();
+        for(var i of data.ches){
+          if(!selectTopics[i.name_top]){
+            var topicButton = $("<button></button>").attr({
+              "class":"btn btn-default notAdded",
+              "type":"submit",
+              "id": i.name_top
+            }).html(i.name_top);
+            topicButton.text(i.name_top);
+            topicButton.click(addTopic);
+            $("#addTopics").append(topicButton);
+          }
+        }
+      }));*/
+        $("tr").click(function(){
+          //alert('Something')
+          if( typeof $(this).attr('id') !== 'undefined'){
+          var iden = "/posting/"+$(this).attr("id");
+          //window.document.location =iden;
+           window.location.href = iden;
+         }
+        });
+
+        $('#plus').click(function(){
+          $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+          $.getJSON($SCRIPT_ROOT + '/change', {
+              valeur: {{ valeur }} + 10
+          });
+          window.location.href = '/';
+        });
+        $('#moins').click(function(){
+          $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+          $.getJSON($SCRIPT_ROOT + '/change', {
+              valeur: {{ valeur }} - 10
+          });
+          window.location.href = '/';
+        });
+      });
+    </script>
+    {% endblock %}

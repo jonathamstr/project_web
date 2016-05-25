@@ -1,0 +1,72 @@
+{% extends "html/layout.html" %}
+{% block content %}
+  <div class="container">
+
+
+		<ul id="myTab" class="nav nav-tabs">
+		<li class="active"><a href="#info" data-toggle="tab">Info perso</a></li>
+		<li><a href="#pubs" data-toggle="tab">Publications</a></li>
+		<li><a href="#comments" data-toggle="tab">Comments</a></li>
+    <li><a href="#groups" data-toggle="tab">Groups</a></li>
+		</ul>
+
+		<div id="myTabContent" class="tab-content">
+
+		<div class="tab-pane fade in active" id="info">
+		  <form name="form_admin"  action="/changeUser" method="POST">
+			<table>
+			 <tr><td>Name</td><td><input type="name" id="inputName" value={{ person.nom_util }} class="form-control"  name="Name" required readonly></td></tr>
+			 <tr><td>Password</td><td><input type="pass" id="inputPassword" class="form-control"  value={{ person.motpass }} name="Pass" required ></td></tr>
+			 <tr><td>Email</td><td><input type="email" id="inputEmail" class="form-control"  value={{ person.email_util }} name="Email" required readonly></td></tr>
+			 <tr><td>Info perso</td><td><textarea type="text" class="form-control"  rows="3" name="Cuerpo">{{ person.info_uti }}</textarea></td></tr>
+			</table>
+			<br>
+			<button type="submit" class="btn btn-success">Save!</button>
+
+			</form>
+		</div>
+
+		<div class="tab-pane fade" id="pubs">
+		<table>
+      <tr><th>Publications</th></tr>
+      {%for i in pubs %}
+        <tr><td><a href=/posting/{{i.cle_pub}}>{{i.titre}}</a></td></tr>
+      {% endfor %}
+			 <!--<tr><td>Title</td><td>{{ pubs.titre }}</td></tr>
+			 <tr><td>Corps</td><td>{{ pubs.corps }}</td></tr>
+			 <tr><td>Date</td><td>{{ pubs.date }}</td></tr>-->
+			 </table>
+		</div>
+
+		<div class="tab-pane fade" id="comments">
+		<table>
+      <tr><th>Comments</th></tr>
+      {%for i in comments %}
+        <tr><td><a href=/posting/{{i.cle_pub}}>{{i.corps}}</a></td></tr>
+      {% endfor %}
+			<!-- <tr><td>Title</td><td>{{ pubs.titre }}</td></tr>
+			 <tr><td>Corps</td><td>{{ comments.corps }}</td></tr>-->
+			</table>
+		</div>
+
+    <div class="tab-pane fade" id="groups">
+		<table>
+      <tr><th>Groups</th></tr>
+      {%for i in groups %}
+      <!--<tr class="groups" id="{{i.cle_group}}"><td>{{i.name_group}}</td></tr>-->
+      <tr><td><a href=/group/{{i.cle_group}}>{{i.group.name_group}}</a></td></tr>
+      {% endfor %}
+			<!-- <tr><td>Title</td><td>{{ pubs.titre }}</td></tr>
+			 <tr><td>Corps</td><td>{{ comments.corps }}</td></tr>-->
+			</table>
+		</div>
+
+		</div>
+  </div><!-- /.container -->
+	 <br>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "html/layout.html" %}
+{% block content %}
+	<hr>
+	<div class="container">
+	<h2>xbindkeys does not work. Terminated message</h2>
+ 	<hr>
+	</div>
+	<br>
+
+	<div class="container">
+	<div class="post-text" itemprop="text">
+
+	<p>I have xbindkeys among the commands to run on session start on my xinitrc.
+	Problem is, lately xbindkeys is not running. </p>
+
+	<p>All other programs on xinitrc run, so its not startx.</p>
+
+	<p>When I try running from console, (even with the -n non demon flag) the program exits immediately with the message <code>Terminated</code></p>
+
+	<p>What could it be? Thanks in advance.</p>
+	    </div>
+
+	</div>
+	<hr>
+
+	<div class="container">
+	<h2>Answer</h2>
+    	<p>You are missing a store. Every grid needs a store. (this.ds is undefined =&gt; ds is probably dataStore)</p>
+
+<p>I don't know what version you are working with. (check that by typing <code>Ext.versions.extjs.version</code> in the console)</p>
+ 	<hr>
+
+	</div>
+
+	<div class="container">
+	<h2>Your Answer</h2>
+    <textarea class="form-control" rows="3"></textarea>
+ 	<br>
+
+	</div>
+{% endblock %}

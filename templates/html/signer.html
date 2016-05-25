@@ -1,0 +1,22 @@
+{% extends "html/layout.html" %}
+{% block content %}
+    <div class="container">
+
+      <form name="form_admin" class="form-signin" action="/login" method="POST">
+        <h2 class="form-signin-heading">Error, please sign in</h2>
+
+        <label for="inputName" class="sr-only">Name</label>
+        <input type="name" id="inputName" class="form-control" placeholder="Name"  name="Email" required >
+
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword1" class="form-control" placeholder="Password" name="Password" required >
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+	 <form name="form_admin" class="form-signin" action="/signin">
+       <h2 class="form-signin-heading">Not yet sign up? Click her</h2>
+       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+      </form>
+    </div> <!-- /container -->
+{% endblock %}

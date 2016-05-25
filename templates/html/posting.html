@@ -1,0 +1,62 @@
+{% extends "html/layout.html" %}
+{% block content %}
+<div class="container main-container">
+<form action="/change/{{ publ.cle_pub}}" method="POST">
+    <label for="textInput">Titre</label>
+     <input type="text" id="titre" class="form-control" value="{{ publ.titre }}" name="titre" {% if not editable %}readonly{% endif %}>
+     <br>
+     <label for="textInput">Corps</label>
+     <textarea class="form-control" rows="3" name="Corps" {% if not editable %}readonly{% endif %}>{{publ.corps}}</textarea>
+     {% for i in reltopics %}
+     <a href="/topics/{{i.topic.cle_top}}">{{i.topic.name_top}}</a>
+     {% endfor %}
+    <p>Par {{publ.auteur.nom_util}} le {{publ.date}}</p>
+
+    {% if editable %}
+    <button type="submit" class="btn btn-default" id="Change">Save Change</button>
+    {% endif %}
+  </form>
+  {% if editable %}
+  <button type="button" class="btn btn-danger" id="Delete">Delete Publication</button>
+  {% endif %}
+    <!--  <div class="form-group">
+        <form action="/pub" method="POST">
+	<h3>Nouvelle Publication</h3>
+  <label for="title">Titre de la publication</label>
+  <input type="text" class="form-control" placeholder="Titre" name="Titre">
+  <label for="Corps">Mettre l'information</label>
+  <textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
+ 	<br>
+     <button class="btn btn-lg btn-primary btn-block" type="submit">Publier</button>
+   </form>
+ </div>-->
+ {% if comments %}
+  <div>
+    {% for comm in comments %}
+      <h4>{{comm.auteur.nom_util}} dis: </h4>
+      <p>{{ comm.corps }}</p>
+      <br>
+    {% endfor %}
+  </div>
+ {% endif %}
+ <div class="form-group">
+   <form  action="/postcomment/{{ publ.cle_pub }}" method="POST">
+       <label for="Corps">Mettre un commentaire</label>
+        <textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
+        <button class="btn btn-lg btn-primary" type="submit">Publier</button>
+      </form>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+    $(document).ready(function(){
+      $("#Change").click(function(){
+       window.location.href = "/change/" + {{ publ.cle_pub }};
+      //alert('YO');
+      });
+      $("#Delete").click(function(){
+        window.location.href = "/delete/" + {{ publ.cle_pub }};
+      });
+    });
+    </script>
+{% endblock %}
