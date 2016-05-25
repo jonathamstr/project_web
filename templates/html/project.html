@@ -1,0 +1,32 @@
+{% extends "html/layout.html" %}
+{% block content %}
+<div class="container">
+  <h1>{{projet.name_projet}}</h1>
+  <p>{{projet.desc_projet}}</p>
+   <button type="button" id="togU" class="btn btn-lg">Update Projet</button>
+   <div class="form-group" id="newUp">
+     <form action="/updateProject/{{ projet.cle_pro}}" method="POST">
+       <textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
+       <br>
+       <button class="btn btn-lg btn-primary btn-block" type="submit">Post Update</button>
+    </div>
+  <h3>Updates</h3>
+    {% for i in  updates %}
+    <p>{{i.descUP }}<br>
+      Date: {{i.dateUP}}
+    </p>
+    {% endfor %}
+</form>
+
+</div>
+{% endblock %}
+{% block script %}
+<script>
+$(document).ready(function(){
+  $('#togU').click(function(){
+    $('#newUp').toggle();
+  });
+  $('#newUp').hide();
+});
+</script>
+{% endblock %}

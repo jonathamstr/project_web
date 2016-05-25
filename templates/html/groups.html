@@ -1,0 +1,44 @@
+{% extends "html/layout.html" %}
+{% block content %}
+<div class="container main-container">
+    <div class="form-group">
+      <form action="/newgroup" method="POST">
+<h3>New Group</h3>
+<label for="title"></label>
+<input type="text" class="form-control" placeholder="Titre" name="Titre">
+<label for="Corps">Group Description</label>
+<textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
+  <!--<textarea class="form-control" rows="3"></textarea> -->
+<br>
+   <button class="btn btn-lg btn-primary btn-block" type="submit">Create New Group</button>
+ </form>
+ </div>
+<div class="container">
+    <div class="divider">
+      <h2>Groups</h2>
+
+    </div>
+    <table class="table table-hover" id="table-publications">
+      <tr><th>Groups</th></tr>
+      {% for i in groups %}
+      <tr id={{i.cle_group}}><td>{{i.name_group}}</td></tr>
+      {% endfor %}
+    </table>
+
+
+  </div><!-- /.container -->
+{% endblock %}
+{% block script %}
+<script>
+  $(document).ready(function(){
+    $("tr").click(function(){
+      //alert('Something')
+      if( typeof $(this).attr('id') !== 'undefined'){
+      var iden = "/group/"+$(this).attr("id");
+      //window.document.location =iden;
+       window.location.href = iden;
+     }
+    });
+  });
+</script>
+{% endblock %}

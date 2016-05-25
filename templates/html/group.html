@@ -1,0 +1,70 @@
+{% extends "html/layout.html" %}
+{% block content %}
+  <div class="container">
+    <h2>{{ group.name_group}}</h2>
+      <p>{{ group.desc_group }}</p>
+      <br>
+      {% if not partOf %}
+      <p>You're not part of this group, want to join?<br>
+      <a href="/joinGroup/{{ group.cle_group}}">Join Now!</a></p>
+
+      {% else %}
+       <h3>Projects</h3>
+       <table class="table table-hover" id="table-publications">
+         <tr><th>Projets</th></tr>
+         {% for i in projets %}
+         <tr id={{i.cle_pro}}><td>{{i.name_projet}}</td></tr>
+         {% endfor %}
+       </table>
+       <h3>New Project  <button type="button" id="togP" class="btn btn-lg">Show</button></h3>
+       <div class="form-group" id="newPro">
+         <form action="/newproject/{{ group.cle_group}}" method="POST">
+   <label for="title"></label>
+   <input type="text" class="form-control" placeholder="Titre" name="Titre">
+   <label for="Corps">Project Description</label>
+   <textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="Corps"></textarea>
+   <br>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Create New Projet</button>
+    </form>
+    </div>
+    <h3>Updates</h3>
+      {% for i in  updates %}
+      <p>{{i.corpsUG }}<br>
+        Date: {{i.dateUG}}
+      </p>
+      {% endfor %}
+      <h3>New Update<button type="button" id="togU" class="btn btn-lg">Show</button></h3>
+    <div class="form-group" id="newU">
+      <form action="/newUpdate/{{ group.cle_group}}" method="POST">
+<textarea type="text" class="form-control" placeholder="Texte de la publication" rows="3" name="CorpsU"></textarea>
+<br>
+   <button class="btn btn-lg btn-primary btn-block" type="submit">Post Update to the Group</button>
+ </form>
+ </div>
+      {% endif %}
+
+  </div>
+{% endblock %}
+{% block script %}
+<script>
+  $(document).ready(function(){
+    $("tr").click(function(){
+      //alert('Something')
+      if( typeof $(this).attr('id') !== 'undefined'){
+        var iden = "/project/"+$(this).attr("id");
+        //window.document.location =iden;
+        window.location.href = iden;
+      }
+    });
+    $('#togP').click(function(){
+      $('#newPro').toggle();
+    });
+    $('#togU').click(function(){
+      $('#newU').toggle();
+    });
+    $('#newPro').hide();
+    $('#newU').hide();
+
+});
+</script>
+{% endblock %}

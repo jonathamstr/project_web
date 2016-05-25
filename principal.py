@@ -2,7 +2,7 @@ from flask import *
 from sqlalchemy import *
 from sqlalchemy.sql import *
 from sqlalchemy.orm import sessionmaker
-from sql_alchemydeclarative import  Base, User ,Publication, Commentaire , Topic, Reltop
+from sql_alchemydeclarative import  Base, User ,Publication, Commentaire , Topic, Reltop , Group, Relgroup, Projet, UpdateGroup, UpdateProjet
 
 app = Flask(__name__)
 app.secret_key = 'iswuygdedgv{&75619892__01;;>..zzqwQIHQIWS'
@@ -48,18 +48,21 @@ def change():
     valeur = request.args.get('valeur', 0, type=int)
     if valeur < 0:
         valeur = 0
-    
+
     #return jsonify(valeur)
 
 @app.route('/login',methods=['POST'])
 def login():
     session['Email'] = escape(request.form['Email'])
-    session['Password'] = escape(request.form['Password'])
+    #session['Password'] = escape(request.form['Password'])
     session['logged'] = False
-    person = sessiondb.query(User).filter(or_(User.nom_util == session['Email'],User.email_util == session['Email'])).all()
-    for row in person:
+    person = sessiondb.query(User).filter(and_(or_(User.nom_util == session['Email'],User.email_util == session['Email'])),User.motpass == escape(request.form['Password'])).one()
+    if person:
         session['logged'] = True
     if session['logged']:
+        session['Email'] = person.email_util
+        session['Name'] = person.nom_util
+        session['ID'] = person.cle_util
         return redirect('/')
     else:
         session.clear()
@@ -207,7 +210,80 @@ def topics(Iden=-1):
 
     return render_template('html/topics.html',message= session['Email'], logged = session['logged'],pubs = pubs)
 
+@app.route('/groups')
+def groups():
+    groupS = sessiondb.query(Group).all()
+    return render_template('html/groups.html',message= session['Email'], logged = session['logged'],groups = groupS)
 
+@app.route('/newgroup',methods=['POST'])
+def newgroup():
+    groups = sessiondb.query(Group).filter(Group.name_group == request.form['Titre']).all()
+    if not groups:
+        group = Group(name_group=request.form['Titre'],desc_group=request.form['Corps'])
+        sessiondb.add(group)
+        sessiondb.commit();
+    return redirect('/groups')
+
+@app.route('/group/<Iden>')
+def seeGroup(Iden):
+    group = sessiondb.query(Group).filter(Group.cle_group == Iden).one()
+    partie = sessiondb.query(Relgroup).filter(and_(Relgroup.cle_group == Iden,Relgroup.cle_util == session['ID'])).all()
+    if partie:
+        partie = sessiondb.query(Relgroup).filter(and_(Relgroup.cle_group == Iden,Relgroup.cle_util == session['ID'])).one()
+        projets = sessiondb.query(Projet).filter(Projet.cle_group == partie.cle_group).all()
+        updates = sessiondb.query(UpdateGroup).filter(UpdateGroup.cle_group == partie.cle_group).all()
+        return render_template('html/group.html',message= session['Email'], logged = session['logged'],partOf = partie,group=group,projets=projets,updates = updates)
+    return render_template('html/group.html',message= session['Email'], logged = session['logged'],partOf = partie,group=group)
+
+@app.route('/joinGroup/<Iden>')
+def joinGroup(Iden):
+    rel = Relgroup(cle_util=session['ID'],cle_group=Iden)
+    sessiondb.add(rel)
+    sessiondb.commit()
+    return redirect('/group/'+Iden)
+
+@app.route('/newproject/<Iden>',methods=['POST'])
+def newproject(Iden):
+    projet = Projet(cle_group=Iden,name_projet=request.form['Titre'],desc_projet=request.form['Corps'])
+    sessiondb.add(projet)
+    sessiondb.commit()
+    return redirect('/group/'+Iden)
+
+@app.route('/newUpdate/<Iden>',methods=['POST'])
+def postUpdate(Iden):
+    update = UpdateGroup(cle_group=Iden,corpsUG = request.form['CorpsU'])
+    sessiondb.add(update)
+    sessiondb.commit()
+    return redirect('/group/'+Iden)
+
+@app.route("/project/<Iden>")
+def projet(Iden):
+    projet =sessiondb.query(Projet).filter(Projet.cle_pro == Iden).one()
+    updates = sessiondb.query(UpdateProjet).filter(UpdateProjet.cle_pro == Iden)
+    return render_template('html/project.html',message= session['Email'], logged = session['logged'],projet = projet,updates=updates)
+
+@app.route("/updateProject/<Iden>",methods=['POST'])
+def updateProjet(Iden):
+    update = UpdateProjet(cle_pro =Iden,descUP=request.form['Corps'])
+    sessiondb.add(update)
+    sessiondb.commit()
+    return redirect('/project/'+Iden)
+
+@app.route('/profile')
+def profile():
+    person = sessiondb.query(User).filter(User.cle_util == session['ID']).one()
+    pubs = sessiondb.query(Publication).filter(Publication.cle_util == session['ID']).all()
+    comm = sessiondb.query(Commentaire).filter(Commentaire.cle_util == session['ID']).all()
+    groups = sessiondb.query(Relgroup).filter(Relgroup.cle_util == session['ID']).all()
+    return render_template('html/infoperso.html',message= session['Email'], logged = session['logged'],person =person,pubs =pubs,comments = comm,groups=groups)
+
+@app.route('/changeUser',methods=['POST'])
+def changeuser():
+    person = sessiondb.query(User).filter(User.cle_util == session['ID']).one()
+    person.motpass = request.form['Pass']
+    person.info_uti = request.form['Cuerpo']
+    sessiondb.commit()
+    return redirect('/profile')
 
 #@app.route('/_array2python')
 #def profile():

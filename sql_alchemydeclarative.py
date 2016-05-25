@@ -60,6 +60,44 @@ class Reltop(Base):
     cle_pub = Column(Integer,ForeignKey('publication.cle_pub'))
     publication = relationship(Publication)
 
+class Group(Base):
+    __tablename__ = 'group'
+    cle_group = Column(Integer,autoincrement=True,primary_key=True)
+    name_group = Column(String)
+    desc_group = Column(String)
+
+class Relgroup(Base):
+    __tablename__ = 'relgroup'
+    cle_relgroup = Column(Integer,autoincrement=True,primary_key=True)
+    cle_util = Column(Integer,ForeignKey('user.cle_util'))
+    utilisateur = relationship(User)
+    cle_group = Column(Integer,ForeignKey('group.cle_group'))
+    group = relationship(Group)
+
+class Projet(Base):
+    __tablename__ = "projet"
+    cle_pro = Column(Integer,autoincrement=True,primary_key=True)
+    cle_group = Column(Integer,ForeignKey('group.cle_group'))
+    group = relationship(Group)
+    name_projet = Column(String)
+    desc_projet = Column(String)
+
+class UpdateGroup(Base):
+    __tablename__ = "updateGroup"
+    cle_ug = Column(Integer,autoincrement=True,primary_key=True)
+    cle_group = Column(Integer,ForeignKey('group.cle_group'))
+    group = relationship(Group)
+    corpsUG = Column(String)
+    dateUG  = Column(DateTime,default=func.now())
+
+class UpdateProjet(Base):
+    __tablename__ = "updateProjet"
+    cle_up = Column(Integer,autoincrement=True,primary_key=True)
+    cle_pro = Column(Integer,ForeignKey('projet.cle_pro'))
+    projet = relationship(Projet)
+    descUP = Column(String)
+    dateUP = Column(DateTime,default=func.now())
+
 engine = create_engine('sqlite:///mabase.db', echo=True)
 
 Base.metadata.create_all(engine)
