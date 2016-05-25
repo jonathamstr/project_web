@@ -15,10 +15,10 @@
 		<div class="tab-pane fade in active" id="info">
 		  <form name="form_admin"  action="/changeUser" method="POST">
 			<table>
-			 <tr><td>Name</td><td><input type="name" id="inputName" value={{ person.nom_util }} class="form-control"  name="Name" required ></td></tr>
+			 <tr><td>Name</td><td><input type="name" id="inputName" value={{ person.nom_util }} class="form-control"  name="Name" required readonly></td></tr>
 			 <tr><td>Password</td><td><input type="pass" id="inputPassword" class="form-control"  value={{ person.motpass }} name="Pass" required ></td></tr>
-			 <tr><td>Email</td><td><input type="email" id="inputEmail" class="form-control"  value={{ person.email_util }} name="Email" required ></td></tr>
-			 <tr><td>Info perso</td><td><textarea type="text" class="form-control" value={{ person.info_uti }} rows="3" name="Cuerpo"></textarea></td></tr>
+			 <tr><td>Email</td><td><input type="email" id="inputEmail" class="form-control"  value={{ person.email_util }} name="Email" required readonly></td></tr>
+			 <tr><td>Info perso</td><td><textarea type="text" class="form-control"  rows="3" name="Cuerpo">{{ person.info_uti }}</textarea></td></tr>
 			</table>
 			<br>
 			<button type="submit" class="btn btn-success">Save!</button>

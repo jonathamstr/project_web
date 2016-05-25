@@ -8,7 +8,7 @@
      <label for="textInput">Corps</label>
      <textarea class="form-control" rows="3" name="Corps" {% if not editable %}readonly{% endif %}>{{publ.corps}}</textarea>
      {% for i in reltopics %}
-     <a href="/topic/{{i.topic.cle_top}}">{{i.topic.name_top}}</a>
+     <a href="/topics/{{i.topic.cle_top}}">{{i.topic.name_top}}</a>
      {% endfor %}
     <p>Par {{publ.auteur.nom_util}} le {{publ.date}}</p>
 

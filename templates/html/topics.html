@@ -170,14 +170,14 @@
           $.getJSON($SCRIPT_ROOT + '/change', {
               valeur: {{ valeur }} + 10
           });
-          window.location.href = '/';
+          window.location.href = '/topics';
         });
         $('#moins').click(function(){
           $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
           $.getJSON($SCRIPT_ROOT + '/change', {
               valeur: {{ valeur }} - 10
           });
-          window.location.href = '/';
+          window.location.href = '/topics';
         });
       });
     </script>

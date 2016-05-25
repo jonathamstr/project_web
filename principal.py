@@ -56,17 +56,19 @@ def login():
     session['Email'] = escape(request.form['Email'])
     #session['Password'] = escape(request.form['Password'])
     session['logged'] = False
-    person = sessiondb.query(User).filter(and_(or_(User.nom_util == session['Email'],User.email_util == session['Email'])),User.motpass == escape(request.form['Password'])).one()
-    if person:
-        session['logged'] = True
+    person = sessiondb.query(User).filter(and_(or_(User.nom_util == session['Email'],User.email_util == session['Email'])),User.motpass == escape(request.form['Password'])).all()
+    if person:  
+        for i in person:
+            session['logged'] = True
+            session['Email'] = i.email_util
+            session['Name'] = i.nom_util
+            session['ID'] = i.cle_util
     if session['logged']:
-        session['Email'] = person.email_util
-        session['Name'] = person.nom_util
-        session['ID'] = person.cle_util
         return redirect('/')
     else:
         session.clear()
         return render_template('html/signer.html')
+
 
 
 @app.route('/logout')
@@ -100,6 +102,9 @@ def register():
         sessiondb.commit()
         session['Email'] = Email
         session['logged'] = True
+        session['Email'] = person.email_util
+        session['Name'] = person.nom_util
+        session['ID'] = person.cle_util
     return redirect('/')
 
 
@@ -134,14 +139,6 @@ def postcomment(Iden):
     sessiondb.add(comm)
     sessiondb.commit()
     return redirect('/posting/' + Iden)
-
-
-
-@app.route('/getutil')
-def getUtil():
-    name = request.args.get('message','Vide')
-    print(name)
-    return jsonify(ches='Putain cela a marche')
 
 @app.route('/getTopTopics')
 def getTopTopics():
@@ -193,7 +190,10 @@ def changePub(Iden):
 def deletePub(Iden):
     publi = sessiondb.query(Publication).filter(Publication.cle_pub == Iden).one()
     reltop = sessiondb.query(Reltop).filter(Reltop.cle_pub == Iden).all()
+    comments = sessiondb.query(Commentaire).filter(Commentaire.cle_pub == Iden).all()
     for i in reltop:
+        sessiondb.delete(i)
+    for i in comments:
         sessiondb.delete(i)
     sessiondb.delete(publi)
     sessiondb.commit()
@@ -202,16 +202,21 @@ def deletePub(Iden):
 @app.route('/topics')
 @app.route('/topics/<Iden>')
 def topics(Iden=-1):
+    logged = 'logged' in session
+    if not logged:
+        return render_template('html/index.html',message='', logged=logged)
     pubs = []
     if Iden >= 0:
         pubs = sessiondb.query(Reltop).filter(Reltop.cle_top == Iden).all()
         for i in pubs:
             print(i.topic.name_top)
-
     return render_template('html/topics.html',message= session['Email'], logged = session['logged'],pubs = pubs)
 
 @app.route('/groups')
 def groups():
+    logged = 'logged' in session
+    if not logged:
+        return render_template('html/index.html',message='', logged=logged)
     groupS = sessiondb.query(Group).all()
     return render_template('html/groups.html',message= session['Email'], logged = session['logged'],groups = groupS)
 
@@ -281,9 +286,24 @@ def profile():
 def changeuser():
     person = sessiondb.query(User).filter(User.cle_util == session['ID']).one()
     person.motpass = request.form['Pass']
-    person.info_uti = request.form['Cuerpo']
+    person.info_uti = escape(request.form['Cuerpo'])
+    print(request.form['Cuerpo'])
     sessiondb.commit()
     return redirect('/profile')
+
+@app.route('/about')
+def about():
+    logged = 'logged' in session
+    if not logged:
+        return render_template('html/about.html',message='', logged=logged)
+    return render_template('html/about.html',message= session['Email'], logged = session['logged'])
+
+@app.route('/howto')
+def howto():
+    logged = 'logged' in session
+    if not logged:
+        return render_template('html/howto.html',message='', logged=logged)
+    return render_template('html/howto.html',message= session['Email'], logged = session['logged'])
 
 #@app.route('/_array2python')
 #def profile():
